@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('judul');
-            $table->string('kategori');
-            $table->string('deskripsi');
-            $table->integer('jumlah');
+            $table->string('title');
+            $table->string('description');
+            $table->integer('quantity');
             $table->string('file');
             $table->string('cover');
             // $table->unsignedBigInteger('user_id');
