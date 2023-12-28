@@ -11,5 +11,9 @@ class Book extends Model
     {
         return $this->belongsTo('User');
     }
+    public function category()
+    {
+        return $this->belongsToMany(Category::class, 'books_categories', 'book_id', 'category_id');
+    }
     use HasFactory;
 }
