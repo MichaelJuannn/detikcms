@@ -32,7 +32,6 @@ class BookController extends Controller
     public function store(StoreBookRequest $request)
     {
         $user_id = Auth::id();
-        dump($user_id);
         //
         $title = $request->input('title');
         $category = $request->input('category');
