@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('category');
+            $table->timestamps();
         });
 
         Schema::create('books_categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('book_id')->references('id')->on('books')->onDelete('cascade');
             $table->foreignId('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 
