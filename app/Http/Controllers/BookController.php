@@ -36,13 +36,22 @@ class BookController extends Controller
     public function store(StoreBookRequest $request)
     {
         $user_id = Auth::id();
-        //
         $title = $request->input('title');
         $category = $request->input('category');
         $description = $request->input('description');
         $quantity = $request->input('quantity');
-        $file = $request->input('file');
-        $cover = $request->input('cover');
+
+        //file req
+        $file = $request->file('file');
+        $cover = $request->file('cover');
+
+        $file_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $cover_name = pathinfo($cover->getClientOriginalName(), PATHINFO_FILENAME);
+        $saved_file_name = $file_name . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $saved_cover_name = $cover_name . '_' . time() . '.' . $cover->getClientOriginalExtension();
+        $file_path = $file->storeAs('book_file', $saved_file_name, 'public');
+        $cover_path = $file->storeAs('cover_file', $saved_cover_name, 'public');
+
         //query
         $category = Category::firstOrCreate(['category' => $category]);
         $book = Book::create([
@@ -50,8 +59,8 @@ class BookController extends Controller
             'category' => $category,
             'description' => $description,
             'quantity' => $quantity,
-            'file' => $file,
-            'cover' => $cover,
+            'file' => $file_path,
+            'cover' => $cover_path,
             'user_id' => $user_id,
         ]);
         $categoryId = [$category->id];
