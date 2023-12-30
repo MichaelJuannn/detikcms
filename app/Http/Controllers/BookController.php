@@ -16,6 +16,8 @@ class BookController extends Controller
     public function index()
     {
         //
+        $books = Book::all();
+        return $books;
     }
 
     /**
@@ -24,6 +26,8 @@ class BookController extends Controller
     public function create()
     {
         //
+        $view = view('book.book');
+        return $view;
     }
 
     /**
@@ -52,16 +56,17 @@ class BookController extends Controller
         ]);
         $categoryId = [$category->id];
         $book->category()->attach($categoryId);
-        return "xdd";
+        return redirect()->route('books.create', ['success' => 1]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Book $book)
+    public function show(Book $bookModel, string $book)
     {
-        //
-        return "xd";
+        $bookRes = Book::where('id', $book)->first();
+
+        return $bookRes;
     }
 
     /**
@@ -83,8 +88,9 @@ class BookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Book $book)
+    public function destroy(Book $bookModel, string $book)
     {
-        //
+        $deleted = Book::where('id', $book)->delete();
+        return $deleted;
     }
 }

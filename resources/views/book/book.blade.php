@@ -1,5 +1,4 @@
-<form action="/book/newbook" method="post">
-    @csrf
+<form action="/dashboard/books" method="post">
     <input type="text" name="title">
     <input type="text" name="category">
     <input type="text" name="description">

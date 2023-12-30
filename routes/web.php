@@ -17,16 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    echo "xdd";
     return view('welcome');
 });
 
-Route::controller(BookController::class)->group(function () {
-    Route::post('/book/newbook', 'store');
-    Route::get('/book', function () {
-        return view('book.book');
-    });
-});
+Route::resource('dashboard/books', BookController::class);
 
 
 Route::get('/dashboard', function () {
