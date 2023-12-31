@@ -12,7 +12,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+        return $categories;
     }
 
     /**
@@ -20,7 +21,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        $view = view('category.create');
+        return $view;
     }
 
     /**
@@ -28,15 +30,28 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $categoryReq = $request->input('category');
+        try {
+            $category = Category::create([
+                'category' => $categoryReq
+            ]);
+        } catch (\Exception $e) {
+            if ($e->getCode() == 23000) {
+                return redirect()->route('categories.create', ['error' => 1]);
+            }
+        }
+        return redirect()->route('categories.create', ['success' => 1]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(Category $categoryModel, string $category)
     {
-        //
+
+        $categoryRes = Category::where('category', $category)->first();
+        $book = $categoryRes->book()->get();
+        return $book;
     }
 
     /**
@@ -58,8 +73,9 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(Category $categoryModel, string $category)
     {
-        //
+        $deleted = Category::where('category', $category)->delete();
+        return redirect()->back();
     }
 }
