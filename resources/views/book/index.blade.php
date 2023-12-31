@@ -32,7 +32,7 @@
                 <tr class="bg-white border-b">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{$book->title}}</th>
                     <td>{{$book->description}}</td>
-                    <td>{{$book->category}}</td>
+                    <td>{{$book->categories}}</td>
                     <td>{{$book->quantity}}</td>
                     <td class="text-center"><a href={{"books/".$book->id}} class="p-2 px-4 bg-gray-200 rounded">Go to
                             Details</a>

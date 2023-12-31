@@ -23,7 +23,8 @@ class BookController extends Controller
             $books = DB::table('books')
                 ->join('books_categories', 'books.id', '=', 'books_categories.book_id')
                 ->join('categories', 'categories.id', '=', 'books_categories.category_id')
-                ->select('books.*', 'categories.category')
+                ->selectRaw('books.*, GROUP_CONCAT(categories.category SEPARATOR ", ") as categories')
+                ->groupBy('books.id')
                 ->get();
             return view('book.index', ['data' => $books, 'categories' => $categories]);
         }
@@ -31,7 +32,8 @@ class BookController extends Controller
             ->join('books_categories', 'books.id', '=', 'books_categories.book_id')
             ->join('categories', 'categories.id', '=', 'books_categories.category_id')
             ->where('categories.category', '=', $queryUrl)
-            ->select('books.*', 'categories.category')
+            ->selectRaw('books.*, GROUP_CONCAT(categories.category SEPARATOR ", ") as categories')
+            ->groupBy('books.id')
             ->get();
 
         return view('book.index', ['data' => $books, 'categories' => $categories]);
