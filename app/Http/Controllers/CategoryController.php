@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -13,7 +14,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::all();
-        return $categories;
+        return view('category.index', ['data' => $categories]);
     }
 
     /**
@@ -49,25 +50,37 @@ class CategoryController extends Controller
     public function show(Category $categoryModel, string $category)
     {
 
-        $categoryRes = Category::where('category', $category)->first();
-        $book = $categoryRes->book()->get();
-        return $book;
+        $categoryRes = DB::table('categories')
+            ->leftJoin('books_categories', 'categories.id', '=', 'books_categories.category_id')
+            ->leftJoin('books', 'books.id', '=', 'books_categories.book_id')
+            ->where('categories.category', $category)
+            ->selectRaw('category, COUNT(books_categories.category_id) AS count')
+            ->groupBy('category')
+            ->first();
+        // $book = $categoryRes->book()->get();
+        return view('category.show', ['data' => $categoryRes]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(Category $categoryModel, string $category)
     {
-        //
+
+        return view('category.update', ['data' => $category]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, Category $categoryModel, string $category)
     {
-        //
+        $newCategory = $request->input('category');
+        $updated = Category::where('category', $category)->first();
+        $updated->update([
+            'category' => $newCategory
+        ]);
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -76,6 +89,6 @@ class CategoryController extends Controller
     public function destroy(Category $categoryModel, string $category)
     {
         $deleted = Category::where('category', $category)->delete();
-        return redirect()->back();
+        return redirect()->route('categories.index');
     }
 }

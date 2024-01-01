@@ -7,8 +7,10 @@ use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -65,12 +67,8 @@ class BookController extends Controller
         $file = $request->file('file');
         $cover = $request->file('cover');
 
-        $file_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $cover_name = pathinfo($cover->getClientOriginalName(), PATHINFO_FILENAME);
-        $saved_file_name = $file_name . '_' . time() . '.' . $file->getClientOriginalExtension();
-        $saved_cover_name = $cover_name . '_' . time() . '.' . $cover->getClientOriginalExtension();
-        $file_path = $file->storeAs('book_file', $saved_file_name, 'public');
-        $cover_path = $file->storeAs('cover_file', $saved_cover_name, 'public');
+        $file_path = saveFile($file);
+        $cover_path = saveCover($cover);
 
         //query
         $category = Category::firstOrCreate(['category' => $category]);
@@ -92,7 +90,13 @@ class BookController extends Controller
      */
     public function show(Book $bookModel, string $book)
     {
-        $bookRes = Book::where('id', $book)->first();
+        $bookRes = DB::table('books')
+            ->join('books_categories', 'books.id', '=', 'books_categories.book_id')
+            ->join('categories', 'categories.id', '=', 'books_categories.category_id')
+            ->where('books.id', '=', $book)
+            ->selectRaw('books.*, GROUP_CONCAT(categories.category SEPARATOR ", ") as categories')
+            ->groupBy('books.id')
+            ->first();
         return view('book.show', ['data' => $bookRes]);
     }
 
@@ -121,12 +125,8 @@ class BookController extends Controller
         $file = $request->file('file');
         $cover = $request->file('cover');
 
-        $file_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $cover_name = pathinfo($cover->getClientOriginalName(), PATHINFO_FILENAME);
-        $saved_file_name = $file_name . '_' . time() . '.' . $file->getClientOriginalExtension();
-        $saved_cover_name = $cover_name . '_' . time() . '.' . $cover->getClientOriginalExtension();
-        $file_path = $file->storeAs('book_file', $saved_file_name, 'public');
-        $cover_path = $file->storeAs('cover_file', $saved_cover_name, 'public');
+        $file_path = saveFile($file);
+        $cover_path = saveCover($cover);
 
         $category = Category::firstOrCreate(['category' => $category]);
         $updatedBook = Book::where('id', $book)->first();
@@ -151,6 +151,18 @@ class BookController extends Controller
     public function destroy(Book $bookModel, string $book)
     {
         $deleted = Book::where('id', $book)->delete();
-        return $deleted;
+        return redirect()->route('books.index');
     }
+}
+function saveCover(UploadedFile $cover)
+{
+    $cover_name = pathinfo($cover->getClientOriginalName(), PATHINFO_FILENAME);
+    $saved_cover_name = $cover_name . '-' . time() . '.' . $cover->getClientOriginalExtension();
+    return $cover_path = $cover->storeAs('cover_file', trim($saved_cover_name), 'public');
+}
+function saveFile(UploadedFile $file,)
+{
+    $file_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+    $saved_file_name = $file_name . '_' . time() . '.' . $file->getClientOriginalExtension();
+    return $file_path = $file->storeAs('book_file', trim($saved_file_name), 'public');
 }

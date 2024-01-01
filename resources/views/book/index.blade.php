@@ -34,7 +34,8 @@
                     <td>{{$book->description}}</td>
                     <td>{{$book->categories}}</td>
                     <td>{{$book->quantity}}</td>
-                    <td class="text-center"><a href={{"books/".$book->id}} class="p-2 px-4 bg-gray-200 rounded">Go to
+                    <td class="text-center"><a href={{route('books.show',['book'=> $book->id])}} class="p-2 px-4
+                            bg-gray-200 rounded">Go to
                             Details</a>
                     </td>
                 </tr>
