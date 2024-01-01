@@ -3,6 +3,8 @@
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserBookController;
+use App\Http\Middleware\AdminAccess;
 use App\Http\Requests\StoreBookRequest;
 use Illuminate\Support\Facades\Route;
 
@@ -20,11 +22,17 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::resource('dashboard/books', BookController::class);
-Route::resource('dashboard/categories', CategoryController::class);
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(AdminAccess::class)->group(function () {
+    Route::resource('dashboard/admin/books', BookController::class);
+    Route::resource('dashboard/admin/categories', CategoryController::class);
+});
+
+Route::middleware('auth', 'verified')->group(function () {
+    Route::resource('dashboard', UserBookController::class);
+});
+Route::get('/dashboard', [UserBookController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
