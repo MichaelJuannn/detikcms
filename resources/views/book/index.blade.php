@@ -5,7 +5,10 @@
         </h2>
     </x-slot>
     <div class="flex justify-start">
-        <a href="books/create"><button class="mx-4 my-5 py-3 px-5 rounded bg-green-400">New Book</button></a>
+        <a href={{ route('books.create') }}><button class="mx-4 my-5 py-3 px-5 rounded bg-green-400">New
+                Book</button></a>
+        <a href={{ route('books.report') }}><button class="mx-4 my-5 py-3 px-5 rounded bg-blue-400">Create
+                Report</button></a>
     </div>
     <div class="pt-3 mx-4">
         <label for="category">Category : </label>

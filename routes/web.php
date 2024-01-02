@@ -25,13 +25,13 @@ Route::get('/', function () {
 Route::middleware(AdminAccess::class)->group(function () {
     Route::resource('dashboard/admin/books', BookController::class);
     Route::resource('dashboard/admin/categories', CategoryController::class);
+    Route::get('/dashboard/admin/report', [BookController::class, 'printPDF'])->name('books.report');
 });
 
 Route::middleware('auth', 'verified')->group(function () {
     Route::resource('dashboard', UserBookController::class);
 });
 Route::get('/dashboard', [UserBookController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-
 
 
 Route::middleware('auth')->group(function () {

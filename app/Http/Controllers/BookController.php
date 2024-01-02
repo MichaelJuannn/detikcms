@@ -6,11 +6,13 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Category;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class BookController extends Controller
 {
@@ -152,6 +154,18 @@ class BookController extends Controller
     {
         $deleted = Book::where('id', $book)->delete();
         return redirect()->route('books.index');
+    }
+    public function printPDF()
+    {
+        $categories = Category::all();
+        $books = DB::table('books')
+            ->join('books_categories', 'books.id', '=', 'books_categories.book_id')
+            ->join('categories', 'categories.id', '=', 'books_categories.category_id')
+            ->selectRaw('books.*, GROUP_CONCAT(categories.category SEPARATOR ", ") as categories')
+            ->groupBy('books.id')
+            ->get();
+        $pdf = Pdf::loadView('book.report', ['data' => $books]);
+        return $pdf->stream('report.pdf');
     }
 }
 function saveCover(UploadedFile $cover)
