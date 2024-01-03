@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
     <div class="m-7">
-        <form action="/dashboard/books" method="post" enctype="multipart/form-data" class="max-w-sm">
+        <form action={{ route('books.store') }} method="post" enctype="multipart/form-data" class="max-w-sm">
             <div class="mb-2">
                 <label for="title" class="block mb-2 text-sm font-medium text-gray-900">Book Title</label>
                 <input type="text" name="title" id="title"
