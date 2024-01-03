@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
     <div class="">
-        <form action={{ route('categories.create') }} method="post" class="max-w-sm m-6 space-y-6">
+        <form action={{ route('categories.store') }} method="post" class="max-w-sm m-6 space-y-6">
             <label for="category" class="block mb-2 text-sm font-medium text-gray-900">Masukkan Kategori Baru</label>
             <input type="text" name="category" id="category"
                 class="bg-gray-50 border border-gray-500 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
